@@ -135,6 +135,37 @@ int quicksqlite::Database::delete_entry(const char* query) const noexcept(false)
     return sqlite3_changes(db);
 }
 
+unsigned long long quicksqlite::Database::insert(const char* query) const noexcept(false)
+{
+    if (!db) {
+        // TODO: Implement proper exception
+        throw quicksqlite::Exception("", 0);
+    }
+
+    sqlite3_stmt* stmt = nullptr;
+    int prep_res = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
+    if (prep_res != SQLITE_OK) {
+        sqlite3_finalize(stmt);
+        // TODO: Implement proper exception
+        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+    }
+
+    int step_res;
+    do {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        step_res = sqlite3_step(stmt);
+    } while (step_res == SQLITE_BUSY);
+
+    if (step_res != SQLITE_OK && step_res != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        // TODO: Implement proper exception
+        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+    }
+
+    sqlite3_finalize(stmt);
+    return sqlite3_last_insert_rowid(db);
+}
+
 bool quicksqlite::Database::open(const char* filepath) noexcept(false)
 {
     if (is_open) {

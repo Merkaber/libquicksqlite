@@ -70,6 +70,14 @@ namespace quicksqlite {
          */
         int delete_entry(const char* query) const noexcept(false);
 
+        /**
+         * Inserts the entries specified by the query
+         * @param query The insert query
+         * @return The last inserted row id
+         * @throw \ref quicksqlite::Exception if an error occurred
+         */
+        unsigned long long insert(const char* query) const noexcept(false);
+
     /* Member functions */
     private:
 
