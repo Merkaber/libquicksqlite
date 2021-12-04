@@ -62,6 +62,14 @@ namespace quicksqlite {
          */
         std::vector<std::vector<std::string>> select(const char* query) const noexcept(false);
 
+        /**
+         * Deletes the entry with the given query
+         * @param query The delete query
+         * @return The number of rows affected
+         * @throw \ref quicksqlite::Exception if an error occurred
+         */
+        int delete_entry(const char* query) const noexcept(false);
+
     /* Member functions */
     private:
 
