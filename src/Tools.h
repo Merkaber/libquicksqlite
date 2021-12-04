@@ -7,17 +7,9 @@
 #pragma once
 
 /**
- * Static class for simple tasks
+ * Namespace for static functions
  */
-class Tools {
-
-/* Interface */
-public:
-
-    /**
-     * This class should be static. We don't want any object of this class
-     */
-    Tools() = delete;
+namespace quicksqlite::Tools {
 
     /**
      * Checks if the a file with the given path exists

@@ -10,15 +10,20 @@
 #include <windows.h>
 #endif
 
+namespace quicksqlite::Tools {
 #ifdef WIN32
-bool Tools::file_exists(const char* const path) noexcept
-{
-    GetFileAttributes(path);
-    if (0xffffffff == GetFileAttributes(path) && GetLastError() == ERROR_FILE_NOT_FOUND) {
-        return false;
-    } else {
-        return true;
+    bool file_exists(const char* const path) noexcept
+    {
+        GetFileAttributes(path);
+        if (0xffffffff == GetFileAttributes(path) && GetLastError() == ERROR_FILE_NOT_FOUND) {
+            return false;
+        } else {
+            return true;
+        }
     }
-}
 #endif
+}
+
+
+
 
