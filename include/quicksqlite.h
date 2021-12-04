@@ -78,6 +78,13 @@ namespace quicksqlite {
          */
         unsigned long long insert(const char* query) const noexcept(false);
 
+        /**
+         * Updates the entry specified by the query
+         * @param query The update query
+         * @return \ref quicksqlite::Exception if an error occurred
+         */
+        int update(const char* query) const noexcept(false);
+
     /* Member functions */
     private:
 
