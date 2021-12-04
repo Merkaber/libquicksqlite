@@ -8,6 +8,8 @@
 
 #include <sqlite3.h>
 #include <exception>
+#include <vector>
+#include <string>
 
 namespace quicksqlite {
     class Exception : std::exception {
@@ -51,6 +53,14 @@ namespace quicksqlite {
          * @throw \ref quicksqlite::Exception if an error occurred
          */
         bool close() noexcept(false);
+
+        /**
+         * Executes the given select query
+         * @param query The select query
+         * @return A result set in which the first row are the names of the columns
+         * @throw \ref quicksqlite::Exception if an error occurred
+         */
+        std::vector<std::vector<std::string>> select(const char* query) const noexcept(false);
 
     /* Member functions */
     private:
