@@ -45,6 +45,8 @@ namespace quicksqlite {
          */
         bool open(const char* filepath) noexcept(false);
 
+        bool close() noexcept(false);
+
     /* Member functions */
     private:
 

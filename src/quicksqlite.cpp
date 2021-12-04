@@ -48,6 +48,25 @@ bool quicksqlite::Database::open(const char* filepath) noexcept(false)
         is_open = true;
         return true;
     } else {
+
+        //TODO: Implement proper exception
+        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+    }
+}
+
+bool quicksqlite::Database::close() noexcept(false)
+{
+    if (!is_open) {
+        return false;
+    }
+
+    int close_res = sqlite3_close(db);
+    if (close_res == SQLITE_OK) {
+        is_open = false;
+        return true;
+    } else {
+
+        //TODO: Implement proper exception
         throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
     }
 }
