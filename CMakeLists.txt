@@ -18,7 +18,7 @@ add_compile_definitions(LIBRARY_NAME="${PROJECT_NAME}: ")
 
 configure_file("${PROJECT_NAME}.pc.in" "${PROJECT_NAME}.pc" @ONLY)
 
-set(SRC_FILES src/quicksqlite.cpp include/quicksqlite.h)
+set(SRC_FILES src/quicksqlite.cpp include/quicksqlite.h src/Tools.cpp src/Tools.h)
 
 find_package(SQLite3 REQUIRED)
 
