@@ -45,6 +45,11 @@ namespace quicksqlite {
          */
         bool open(const char* filepath) noexcept(false);
 
+        /**
+         * Closes the database if not already closed
+         * @return True if the database was closed successfully, otherwise false
+         * @throw \ref quicksqlite::Exception if an error occurred
+         */
         bool close() noexcept(false);
 
     /* Member functions */
