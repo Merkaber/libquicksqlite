@@ -41,8 +41,13 @@ bool quicksqlite::Database::open(const char* filepath) noexcept(false)
         return true;
     }
 
+    int open_res = sqlite3_open(filepath, &db);
+    if (open_res == SQLITE_OK) {
 
-
-    is_open = true;
-    return true;
+        //TODO: Check if the given database is the correct one
+        is_open = true;
+        return true;
+    } else {
+        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+    }
 }

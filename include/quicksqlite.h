@@ -59,5 +59,8 @@ namespace quicksqlite {
         /// Flag which indicates that a proper database has already been opened
         bool is_open = false;
 
+        /// The pointer to the database object
+        sqlite3* db = nullptr;
+
     };
 }
