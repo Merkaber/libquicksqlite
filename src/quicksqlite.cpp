@@ -35,8 +35,8 @@ quicksqlite::Database& quicksqlite::Database::instance() noexcept
 std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* query) const noexcept(false)
 {
     if (!db) {
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception("", 0);
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_SELECT) + std::string(ERR_DB_NOT_OPEN);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_DB_NOT_OPEN);
     }
 
     std::vector<std::vector<std::string>> res_set;
@@ -44,8 +44,10 @@ std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* 
     int prep_res = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
     if (prep_res != SQLITE_OK) {
         sqlite3_finalize(stmt);
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_SELECT) + std::string(ERR_PREPARED_STMT_FAILED)
+                          + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
     }
 
     int step_res;
@@ -56,8 +58,10 @@ std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* 
 
     if (step_res != SQLITE_DONE && step_res != SQLITE_OK && step_res != SQLITE_ROW) {
         sqlite3_finalize(stmt);
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_SELECT) + std::string(ERR_STEP_FAILED)
+                + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_STEP_FAILED);
     }
 
     /* Save the names of the columns in the first row of the result set */
@@ -86,8 +90,10 @@ std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* 
 
         if (step_res != SQLITE_OK && step_res != SQLITE_ROW) {
             sqlite3_finalize(stmt);
-            // TODO: Implement proper exception
-            throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+            std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_SELECT) + std::string(ERR_STEP_FAILED)
+                              + sqlite3_errmsg(db);
+            throw quicksqlite::Exception(msg.c_str(), ERRC_STEP_FAILED);
         }
 
         int col_count = sqlite3_column_count(stmt);
@@ -107,16 +113,18 @@ std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* 
 int quicksqlite::Database::delete_entry(const char* query) const noexcept(false)
 {
     if (!db) {
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception("", 0);
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_DELETE) + std::string(ERR_DB_NOT_OPEN);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_DB_NOT_OPEN);
     }
 
     sqlite3_stmt* stmt = nullptr;
     int prep_res = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
     if (prep_res != SQLITE_OK) {
         sqlite3_finalize(stmt);
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_DELETE) + std::string(ERR_PREPARED_STMT_FAILED)
+                          + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
     }
 
     int step_res;
@@ -127,8 +135,10 @@ int quicksqlite::Database::delete_entry(const char* query) const noexcept(false)
 
     if (step_res != SQLITE_OK && step_res != SQLITE_DONE) {
         sqlite3_finalize(stmt);
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_DELETE) + std::string(ERR_STEP_FAILED)
+                          + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_STEP_FAILED);
     }
 
     sqlite3_finalize(stmt);
@@ -138,16 +148,18 @@ int quicksqlite::Database::delete_entry(const char* query) const noexcept(false)
 unsigned long long quicksqlite::Database::insert(const char* query) const noexcept(false)
 {
     if (!db) {
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception("", 0);
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_INSERT) + std::string(ERR_DB_NOT_OPEN);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_DB_NOT_OPEN);
     }
 
     sqlite3_stmt* stmt = nullptr;
     int prep_res = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
     if (prep_res != SQLITE_OK) {
         sqlite3_finalize(stmt);
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_INSERT) + std::string(ERR_PREPARED_STMT_FAILED)
+                          + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
     }
 
     int step_res;
@@ -158,8 +170,10 @@ unsigned long long quicksqlite::Database::insert(const char* query) const noexce
 
     if (step_res != SQLITE_OK && step_res != SQLITE_DONE) {
         sqlite3_finalize(stmt);
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_INSERT) + std::string(ERR_STEP_FAILED)
+                          + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_STEP_FAILED);
     }
 
     sqlite3_finalize(stmt);
@@ -169,16 +183,18 @@ unsigned long long quicksqlite::Database::insert(const char* query) const noexce
 int quicksqlite::Database::update(const char* query) const noexcept(false)
 {
     if (!db) {
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception("", 0);
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_UPDATE) + std::string(ERR_DB_NOT_OPEN);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_DB_NOT_OPEN);
     }
 
     sqlite3_stmt* stmt = nullptr;
     int prep_res = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
     if (prep_res != SQLITE_OK) {
         sqlite3_finalize(stmt);
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_UPDATE) + std::string(ERR_PREPARED_STMT_FAILED)
+                + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
     }
 
     int step_res;
@@ -189,8 +205,10 @@ int quicksqlite::Database::update(const char* query) const noexcept(false)
 
     if (step_res != SQLITE_OK && step_res != SQLITE_DONE) {
         sqlite3_finalize(stmt);
-        // TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_UPDATE) + std::string(ERR_STEP_FAILED)
+                          + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_STEP_FAILED);
     }
 
     sqlite3_finalize(stmt);
@@ -217,8 +235,9 @@ bool quicksqlite::Database::open(const char* filepath) noexcept(false)
         return true;
     } else {
 
-        //TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_OPEN) + std::string(ERR_COULD_NOT_OPEN) +
+                          sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_COULD_NOT_OPEN);
     }
 }
 
@@ -234,7 +253,8 @@ bool quicksqlite::Database::close() noexcept(false)
         return true;
     } else {
 
-        //TODO: Implement proper exception
-        throw quicksqlite::Exception(sqlite3_errmsg(db), 0);
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_CLOSE) + std::string(ERR_COULD_NOT_CLOSE) +
+                sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_COULD_NOT_CLOSE);
     }
 }

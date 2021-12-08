@@ -21,6 +21,10 @@ namespace quicksqlite {
     private:
         const char* const error_msg;
         const int sqlite_err_code;
+
+    /* Error constants */
+    public:
+        static constexpr const char* const ERR_QUICKSQLITE = "quicksqlite: ";
     };
 
     class Database {
@@ -102,5 +106,33 @@ namespace quicksqlite {
         /// The pointer to the database object
         sqlite3* db = nullptr;
 
+    /* Error Constants */
+    private:
+
+        /* Function names */
+        static constexpr const char* const FN_SELECT = "select(): ";
+        static constexpr const char* const FN_DELETE = "delete_entry(): ";
+        static constexpr const char* const FN_UPDATE = "update(): ";
+        static constexpr const char* const FN_INSERT = "insert(): ";
+        static constexpr const char* const FN_CLOSE = "close(): ";
+        static constexpr const char* const FN_OPEN = "open(): ";
+
+        /* Errors */
+        /* Error code >100 */
+        static constexpr const int ERRC_DB_NOT_OPEN = 100;
+        static constexpr const char* const ERR_DB_NOT_OPEN = "Database is not open! ";
+
+        static constexpr const int ERRC_COULD_NOT_OPEN = 101;
+        static constexpr const char* const ERR_COULD_NOT_OPEN = "Could not open database! ";
+
+        static constexpr const int ERRC_COULD_NOT_CLOSE = 102;
+        static constexpr const char* const ERR_COULD_NOT_CLOSE = "Could not close database! ";
+
+        /* Error code >200 */
+        static constexpr const int ERRC_PREPARED_STMT_FAILED = 200;
+        static constexpr const char* const ERR_PREPARED_STMT_FAILED = "Prepared statement failed! ";
+
+        static constexpr const int ERRC_STEP_FAILED = 201;
+        static constexpr const char* const ERR_STEP_FAILED = "Step failed! ";
     };
 }
