@@ -221,10 +221,10 @@ bool quicksqlite::Database::open(const char* filepath) noexcept(false)
         return false;
     }
 
-    /* Create new database with the given file path if the database did not exist yet */
+    /* If the database did not exist yet */
     if (!Tools::file_exists(filepath)) {
-        //TODO: Create database
-        return true;
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_OPEN) + std::string(ERR_FILE_DOES_NOT_EXIST);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_FILE_DOES_NOT_EXIST);
     }
 
     int open_res = sqlite3_open(filepath, &db);
@@ -239,6 +239,22 @@ bool quicksqlite::Database::open(const char* filepath) noexcept(false)
                           sqlite3_errmsg(db);
         throw quicksqlite::Exception(msg.c_str(), ERRC_COULD_NOT_OPEN);
     }
+}
+
+bool quicksqlite::Database::open(const char* filepath, const char* query) const noexcept(false)
+{
+    if (is_open) {
+        return false;
+    }
+
+    /* If the database did already exist */
+    if (Tools::file_exists(filepath)) {
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_OPEN) + std::string(ERR_FILE_ALREADY_EXIST);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_FILE_ALREADY_EXIST);
+    }
+
+    //TODO: Create database
+    return true;
 }
 
 bool quicksqlite::Database::close() noexcept(false)

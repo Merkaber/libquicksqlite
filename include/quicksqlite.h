@@ -52,6 +52,15 @@ namespace quicksqlite {
         bool open(const char* filepath) noexcept(false);
 
         /**
+         * Create a new database under the given filepath with the given create query
+         * @param filepath The filepath to the new database
+         * @param query The create query for the database
+         * @return True if creation and opening of the database was successful, otherwise false
+         * @throw \ref quicksqlite::Exception if an error occurred
+         */
+        bool open(const char* filepath, const char* query) const noexcept(false);
+
+        /**
          * Closes the database if not already closed
          * @return True if the database was closed successfully, otherwise false
          * @throw \ref quicksqlite::Exception if an error occurred
@@ -127,6 +136,12 @@ namespace quicksqlite {
 
         static constexpr const int ERRC_COULD_NOT_CLOSE = 102;
         static constexpr const char* const ERR_COULD_NOT_CLOSE = "Could not close database! ";
+
+        static constexpr const int ERRC_FILE_DOES_NOT_EXIST = 103;
+        static constexpr const char* const ERR_FILE_DOES_NOT_EXIST = "The file with the given filepath does not exists!";
+
+        static constexpr const int ERRC_FILE_ALREADY_EXIST = 104;
+        static constexpr const char* const ERR_FILE_ALREADY_EXIST = "The file with the given filepath already exists!";
 
         /* Error code >200 */
         static constexpr const int ERRC_PREPARED_STMT_FAILED = 200;
