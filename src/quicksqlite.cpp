@@ -217,10 +217,6 @@ int quicksqlite::Database::update(const char* query) const noexcept(false)
 
 bool quicksqlite::Database::open(const char* filepath) noexcept(false)
 {
-    if (is_open) {
-        return false;
-    }
-
     /* If the database did not exist yet */
     if (!Tools::file_exists(filepath)) {
         std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_OPEN) + std::string(ERR_FILE_DOES_NOT_EXIST);
@@ -229,8 +225,6 @@ bool quicksqlite::Database::open(const char* filepath) noexcept(false)
 
     int open_res = sqlite3_open(filepath, &db);
     if (open_res == SQLITE_OK) {
-
-        //TODO: Check if the given database is the correct one
         is_open = true;
         return true;
     } else {
@@ -247,13 +241,41 @@ bool quicksqlite::Database::open(const char* filepath, const char* query) const 
         return false;
     }
 
+    if (std::string(query).empty()) {
+        return open(filepath);
+    }
+
     /* If the database did already exist */
     if (Tools::file_exists(filepath)) {
         std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_OPEN) + std::string(ERR_FILE_ALREADY_EXIST);
         throw quicksqlite::Exception(msg.c_str(), ERRC_FILE_ALREADY_EXIST);
     }
 
-    //TODO: Create database
+    sqlite3_stmt* stmt = nullptr;
+    int prep_res = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
+    if (prep_res != SQLITE_OK) {
+        sqlite3_finalize(stmt);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_OPEN) + std::string(ERR_PREPARED_STMT_FAILED)
+                          + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
+    }
+
+    int step_res;
+    do {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        step_res = sqlite3_step(stmt);
+    } while (step_res == SQLITE_BUSY);
+
+    if (step_res != SQLITE_OK && step_res != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+
+        std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_OPEN) + std::string(ERR_STEP_FAILED)
+                          + sqlite3_errmsg(db);
+        throw quicksqlite::Exception(msg.c_str(), ERRC_STEP_FAILED);
+    }
+
+    sqlite3_finalize(stmt);
     return true;
 }
 

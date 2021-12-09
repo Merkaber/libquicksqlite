@@ -44,21 +44,14 @@ namespace quicksqlite {
         static Database& instance() noexcept;
 
         /**
-         * Opens the database if not already done
-         * @param filepath The path to the database file
-         * @return True if a new database has been opened, false if a database is already open
-         * @throw \ref quicksqlite::Exception if an error occurred
-         */
-        bool open(const char* filepath) noexcept(false);
-
-        /**
-         * Create a new database under the given filepath with the given create query
+         * Create a new database under the given filepath with the given create query if query string is not empty
+         * If query string is empty, database with the given filepath will tried to be opened
          * @param filepath The filepath to the new database
          * @param query The create query for the database
          * @return True if creation and opening of the database was successful, otherwise false
          * @throw \ref quicksqlite::Exception if an error occurred
          */
-        bool open(const char* filepath, const char* query) const noexcept(false);
+        bool open(const char* filepath, const char* query = "") const noexcept(false);
 
         /**
          * Closes the database if not already closed
@@ -105,6 +98,14 @@ namespace quicksqlite {
          * Scott Meyers' singleton
          */
         Database() = default;
+
+        /**
+         * Opens the database if not already done
+         * @param filepath The path to the database file
+         * @return True if a new database has been opened, false if a database is already open
+         * @throw \ref quicksqlite::Exception if an error occurred
+         */
+        bool open(const char* filepath) noexcept(false);
 
     /* Member */
     private:
