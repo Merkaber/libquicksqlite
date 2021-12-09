@@ -16,5 +16,5 @@ namespace quicksqlite::Tools {
      * @param path The path to the file
      * @return True if the file exists, otherwise false
      */
-    static bool file_exists(const char* path) noexcept;
+    bool file_exists(const char* path) noexcept;
 };
