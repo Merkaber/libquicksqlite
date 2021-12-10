@@ -102,10 +102,10 @@ namespace quicksqlite {
         /**
          * Opens the database if not already done
          * @param filepath The path to the database file
-         * @return True if a new database has been opened, false if a database is already open
+         * @return True if a new database has been opened, false if a database is already _open
          * @throw \ref quicksqlite::Exception if an error occurred
          */
-        bool open(const char* filepath) noexcept(false);
+        bool _open(const char* filepath) noexcept(false);
 
     /* Member */
     private:
@@ -125,7 +125,7 @@ namespace quicksqlite {
         static constexpr const char* const FN_UPDATE = "update(): ";
         static constexpr const char* const FN_INSERT = "insert(): ";
         static constexpr const char* const FN_CLOSE = "close(): ";
-        static constexpr const char* const FN_OPEN = "open(): ";
+        static constexpr const char* const FN_OPEN = "_open(): ";
 
         /* Errors */
         /* Error code >100 */

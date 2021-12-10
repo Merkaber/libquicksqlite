@@ -215,7 +215,7 @@ int quicksqlite::Database::update(const char* query) const noexcept(false)
     return sqlite3_changes(db);
 }
 
-bool quicksqlite::Database::open(const char* filepath) noexcept(false)
+bool quicksqlite::Database::_open(const char* filepath) noexcept(false)
 {
     /* If the database did not exist yet */
     if (!Tools::file_exists(filepath)) {
