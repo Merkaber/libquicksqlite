@@ -128,11 +128,11 @@ int quicksqlite::Database::delete_entry(const char* query) const noexcept(false)
         throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
     }
 
-    int step_res;
-    do {
+    int step_res = sqlite3_step(stmt);
+    while (step_res == SQLITE_BUSY) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         step_res = sqlite3_step(stmt);
-    } while (step_res == SQLITE_BUSY);
+    }
 
     if (step_res != SQLITE_OK && step_res != SQLITE_DONE) {
         sqlite3_finalize(stmt);
@@ -163,11 +163,11 @@ unsigned long long quicksqlite::Database::insert(const char* query) const noexce
         throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
     }
 
-    int step_res;
-    do {
+    int step_res = sqlite3_step(stmt);
+    while (step_res == SQLITE_BUSY) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         step_res = sqlite3_step(stmt);
-    } while (step_res == SQLITE_BUSY);
+    }
 
     if (step_res != SQLITE_OK && step_res != SQLITE_DONE) {
         sqlite3_finalize(stmt);
@@ -198,11 +198,11 @@ int quicksqlite::Database::update(const char* query) const noexcept(false)
         throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
     }
 
-    int step_res;
-    do {
+    int step_res = sqlite3_step(stmt);
+    while (step_res == SQLITE_BUSY) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         step_res = sqlite3_step(stmt);
-    } while (step_res == SQLITE_BUSY);
+    }
 
     if (step_res != SQLITE_OK && step_res != SQLITE_DONE) {
         sqlite3_finalize(stmt);
