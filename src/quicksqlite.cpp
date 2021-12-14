@@ -235,14 +235,14 @@ bool quicksqlite::Database::_open(const char* filepath) noexcept(false)
     }
 }
 
-bool quicksqlite::Database::open(const char* filepath, const char* query) const noexcept(false)
+bool quicksqlite::Database::open(const char* filepath, const char* query) noexcept(false)
 {
     if (is_open) {
         return false;
     }
 
     if (std::string(query).empty()) {
-        return open(filepath);
+        return _open(filepath);
     }
 
     /* If the database did already exist */
@@ -276,6 +276,7 @@ bool quicksqlite::Database::open(const char* filepath, const char* query) const 
     }
 
     sqlite3_finalize(stmt);
+    is_open = true;
     return true;
 }
 

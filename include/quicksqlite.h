@@ -51,7 +51,7 @@ namespace quicksqlite {
          * @return True if creation and opening of the database was successful, otherwise false
          * @throw \ref quicksqlite::Exception if an error occurred
          */
-        bool open(const char* filepath, const char* query = "") const noexcept(false);
+        bool open(const char* filepath, const char* query = "") noexcept(false);
 
         /**
          * Closes the database if not already closed
