@@ -50,11 +50,11 @@ std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* 
         throw quicksqlite::Exception(msg.c_str(), ERRC_PREPARED_STMT_FAILED);
     }
 
-    int step_res;
-    do {
+    int step_res = sqlite3_step(stmt);
+    while (step_res == SQLITE_BUSY) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         step_res = sqlite3_step(stmt);
-    } while (step_res == SQLITE_BUSY);
+    }
 
     if (step_res != SQLITE_DONE && step_res != SQLITE_OK && step_res != SQLITE_ROW) {
         sqlite3_finalize(stmt);
@@ -97,7 +97,8 @@ std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* 
         }
 
         int col_count = sqlite3_column_count(stmt);
-        std::vector<std::string> row_tmp(col_count);
+        std::vector<std::string> row_tmp;
+        row_tmp.reserve(col_count);
         for (int i = 0; i < col_count; ++i) {
             row_tmp.emplace_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, i)));
         }
