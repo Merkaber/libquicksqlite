@@ -69,6 +69,14 @@ namespace quicksqlite {
         std::vector<std::vector<std::string>> select(const char* query) const noexcept(false);
 
         /**
+         * Executes the given select query
+         * @param query The select query
+         * @param id_col_name The name of the id column
+         * @return The id of the last entry within the result set
+         */
+        int get_entry_id(const char* query, const char* id_col_name) const noexcept(false);
+
+        /**
          * Deletes the entry with the given query
          * @param query The delete query
          * @return The number of rows affected
@@ -121,6 +129,7 @@ namespace quicksqlite {
 
         /* Function names */
         static constexpr const char* const FN_SELECT = "select(): ";
+        static constexpr const char* const FN_GET_ENTRY_ID = "get_entry_id(): ";
         static constexpr const char* const FN_DELETE = "delete_entry(): ";
         static constexpr const char* const FN_UPDATE = "update(): ";
         static constexpr const char* const FN_INSERT = "insert(): ";
@@ -150,5 +159,8 @@ namespace quicksqlite {
 
         static constexpr const int ERRC_STEP_FAILED = 201;
         static constexpr const char* const ERR_STEP_FAILED = "Step failed! ";
+
+        static constexpr const int ERRC_COLUMN_NOT_ID = 202;
+        static constexpr const char* const ERR_COLUMN_NOT_ID = "Column is not ";
     };
 }
