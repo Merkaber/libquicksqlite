@@ -143,6 +143,10 @@ int quicksqlite::Database::get_entry_id(const char* query, const char* id_col_na
         throw quicksqlite::Exception(msg.c_str(), ERRC_STEP_FAILED);
     }
 
+    if (step_res == SQLITE_DONE) {
+        return 0;
+    }
+
     const char* id_col_name_tmp = sqlite3_column_name(stmt, 0);
     if (std::string(id_col_name) != std::string(id_col_name_tmp)) {
 
