@@ -63,10 +63,10 @@ namespace quicksqlite {
         /**
          * Executes the given select query
          * @param query The select query
-         * @return A result set in which the first row are the names of the columns
+         * @param output A result set in which the first row are the names of the columns
          * @throw \ref quicksqlite::Exception if an error occurred
          */
-        std::vector<std::vector<std::string>> select(const char* query) const noexcept(false);
+        void select(const char* query, std::vector<std::vector<std::string>>& output) const noexcept(false);
 
         /**
          * Executes the given select query

@@ -33,14 +33,13 @@ quicksqlite::Database& quicksqlite::Database::instance() noexcept
     return database;
 }
 
-std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* query) const noexcept(false)
+void quicksqlite::Database::select(const char* query, std::vector<std::vector<std::string>>& output) const noexcept(false)
 {
     if (!db) {
         std::string msg = std::string(Exception::ERR_QUICKSQLITE) + std::string(FN_SELECT) + std::string(ERR_DB_NOT_OPEN);
         throw quicksqlite::Exception(msg.c_str(), ERRC_DB_NOT_OPEN);
     }
 
-    std::vector<std::vector<std::string>> res_set;
     sqlite3_stmt* stmt = nullptr;
     int prep_res = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
     if (prep_res != SQLITE_OK) {
@@ -79,7 +78,7 @@ std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* 
             ++counter;
             name_tmp.emplace_back(col_name);
         }
-        res_set.push_back(name_tmp);
+        output.push_back(name_tmp);
     }
 
     /* Save data within res_set */
@@ -104,12 +103,11 @@ std::vector<std::vector<std::string>> quicksqlite::Database::select(const char* 
             row_tmp.emplace_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, i)));
         }
 
-        res_set.push_back(row_tmp);
+        output.push_back(row_tmp);
         step_res = sqlite3_step(stmt);
     }
 
     sqlite3_finalize(stmt);
-    return res_set;
 }
 
 int quicksqlite::Database::get_entry_id(const char* query, const char* id_col_name) const noexcept(false)
