@@ -23,6 +23,12 @@ target_include_directories(quicksqlite
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+target_compile_features(quicksqlite PRIVATE cxx_std_17)
+target_compile_options(quicksqlite PRIVATE
+    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+    -Wall -Wextra -Wpedantic>
+)
+
 # Link targets with our own target
 target_link_libraries(quicksqlite
     PUBLIC
