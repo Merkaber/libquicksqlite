@@ -4,7 +4,7 @@
  * Copyright (c) 2021 Simon Piorecki
  */
 
-#include "quicksqlite.h"
+#include "../include/quicksqlite/quicksqlite.h"
 
 #include <thread>
 #include <chrono>
