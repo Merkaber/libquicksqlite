@@ -1,6 +1,9 @@
 # similar cmake structure like: https://github.com/pabloariasal/modern-cmake-sample
 # by Pablo Arias: https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/
 
+# You may have to set installation directory to your project for finding it like so
+# -DQuickSQLite_DIR="C:/Program Files (x86)/libquicksqlite/lib/cmake/QuickSQLite"
+
 cmake_minimum_required(VERSION 3.20)
 project(libquicksqlite VERSION 1.0.0 LANGUAGES CXX)
 
