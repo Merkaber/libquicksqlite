@@ -1,46 +1,97 @@
 cmake_minimum_required(VERSION 3.20)
+project(libquicksqlite VERSION 1.0.0 LANGUAGES CXX)
 
-set(DEFAULT_BUILD_TYPE "Release")
+# Find custom modules if needed
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
-    set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
-    # Set the possible values of build type for cmake-gui
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-project(quicksqlite VERSION 1.0.0)
-
-add_compile_definitions(LIBRARY_NAME="${CMAKE_PROJECT_NAME}: ")
-
-configure_file("${CMAKE_PROJECT_NAME}.pc.in" "${CMAKE_PROJECT_NAME}.pc" @ONLY)
-
-set(SRC_FILES src/quicksqlite.cpp include/quicksqlite.h src/Tools.cpp src/Tools.h)
-
+# Find SQLite3
 find_package(SQLite3 REQUIRED)
 
-add_library(${CMAKE_PROJECT_NAME} ${SRC_FILES})
+# Create target
+set(SRC_FILES src/quicksqlite.cpp include/quicksqlite/quicksqlite.h src/Tools.cpp src/Tools.h)
+add_library(quicksqlite ${SRC_FILES})
 
-set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+# Add alias so that the library can be used inside the build tree
+add_library(QuickSQLite::quicksqlite ALIAS quicksqlite)
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
+# Set target properties
+target_include_directories(quicksqlite
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include> PRIVATE src)
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
-target_link_libraries(${CMAKE_PROJECT_NAME} sqlite3)
+# Link targets with our own target
+target_link_libraries(quicksqlite
+    PUBLIC
+        sqlite3
+)
 
-install(TARGETS ${CMAKE_PROJECT_NAME} EXPORT quicksqliteConfig
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+# Set install paths for UNIX and WIN32
+if(UNIX)
+    include(GNUInstallDirs)
+else()
+    if(WIN32)
+        set(CMAKE_INSTALL_LIBDIR "lib")
+        set(CMAKE_INSTALL_DATADIR "share")
+        set(CMAKE_INSTALL_INCLUDEDIR "include")
+        set(CMAKE_INSTALL_BINDIR "bin")
+        message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
+    else()
+        message(FATAL_ERROR "System not UNIX nor WIN32 - not implemented yet")
+    endif()
+endif()
 
-install(DIRECTORY include/ DESTINATION include)
+# Set place where the configs going to be installed
+set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/QuickSQLite)
 
-install(EXPORT quicksqliteConfig DESTINATION share/quicksqlite/cmake)
+install(TARGETS quicksqlite
+    EXPORT quicksqlite-targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
-install(FILES "${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.pc" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+# This is required so that the exported target has the name QuickSQLite and not quicksqlite
+set_target_properties(quicksqlite PROPERTIES EXPORT_NAME QuickSQLite)
 
-export(TARGETS ${CMAKE_PROJECT_NAME} FILE quicksqliteConfig.cmake)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+# Export the targets to a script
+install(EXPORT quicksqlite-targets
+    FILE
+        QuickSQLiteTargets.cmake
+    NAMESPACE
+        QuickSQLite::
+    DESTINATION
+        ${INSTALL_CONFIGDIR}
+)
+
+# Create a ConfigVersion.cmake file
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/QuickSQLiteConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
+
+configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/QuickSQLiteConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/QuickSQLiteConfig.cmake
+    INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
+)
+
+# Install the config, the configversion and the custom find modules
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/QuickSQLiteConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/QuickSQLiteConfigVersion.cmake
+    DESTINATION ${INSTALL_CONFIGDIR}
+)
+
+# Export from the build tree
+export(EXPORT quicksqlite-targets
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/QuickSQLiteTargets.cmake
+    NAMESPACE QuickSQLite::
+)
+
+export(PACKAGE QuickSQLite)
