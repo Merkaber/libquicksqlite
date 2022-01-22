@@ -1,3 +1,6 @@
+# similar cmake structure like: https://github.com/pabloariasal/modern-cmake-sample
+# by Pablo Arias: https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/
+
 cmake_minimum_required(VERSION 3.20)
 project(libquicksqlite VERSION 1.0.0 LANGUAGES CXX)
 
